@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">VK 2021: Final</string>
+
+    <string name="rss">RSS-данные о подкасте</string>
+    <string name="json">Информация о реакциях в формате JSON (опционально)</string>
+    <string name="tech_info">Введите URL здесь или выберите файл</string>
+
+    <string name="open_file">Открыть файл</string>
+    <string name="can_open1">Можно открывать файлы: .rss</string>
+    <string name="can_open2">Можно открывать файлы: .json</string>
+
+    <string name="auth_vk">Войти ВКонтакте</string>
+    <string name="go_to_listen">Вперед, слушать подкаст</string>
+
+    <string name="more_emoji">Больше реакций</string>
+
 </resources>
