@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">VK 2021: Final</string>
+    <integer name="com_vk_sdk_AppId">7901821</integer>
 
     <string name="rss">RSS-данные о подкасте</string>
     <string name="json">Информация о реакциях в формате JSON (опционально)</string>
@@ -13,5 +14,6 @@
     <string name="go_to_listen">Вперед, слушать подкаст</string>
 
     <string name="more_emoji">Больше реакций</string>
+    <string name="loading">Загрузка...</string>
 
 </resources>

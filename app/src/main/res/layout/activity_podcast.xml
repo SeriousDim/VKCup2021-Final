@@ -52,8 +52,7 @@
         android:backgroundTintMode="add"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/angry" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/podcast_name"
@@ -63,7 +62,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:ellipsize="none"
-        android:text="Очень-очень длинное название подкаста в ВКонтакте"
+        android:text="@string/loading"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="20sp"
@@ -79,7 +78,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Super podcaster"
         android:textColor="@color/vk"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -177,7 +175,7 @@
         app:layout_constraintTop_toBottomOf="@+id/buttons">
 
         <SeekBar
-            android:id="@+id/seekBar2"
+            android:id="@+id/volumeBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -235,6 +233,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:background="#00000000"
+            android:onClick="pauseOrPlay"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -248,6 +247,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:background="#00000000"
+            android:onClick="moveForward"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/play"
@@ -260,6 +260,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="32dp"
             android:background="#00000000"
+            android:onClick="moveBackward"
             android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/play"
@@ -267,11 +268,12 @@
             app:srcCompat="@drawable/ic_replay_15_28" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/speedBtn"
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
             android:background="@drawable/speed_button"
+            android:onClick="changeSpeed"
             android:text="1x"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"

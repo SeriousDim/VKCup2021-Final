@@ -6,17 +6,22 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.loader.content.CursorLoader
 import com.example.vk_cup_2021.modules.Notifier
+import com.example.vkcup_final.modules.FileNetWorker
 import com.example.vkcup_final.modules.RssParser
+import com.example.vkcup_final.retrofit.FileLoadingAPI
 import com.example.vkcup_final.rss_pojos.Channel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileInputStream
 
@@ -24,6 +29,8 @@ import java.io.FileInputStream
 class MainActivity : AppCompatActivity() {
 
     private var channel: Channel? = null
+    private lateinit var retrofit: Retrofit
+    private lateinit var api: FileLoadingAPI
 
     private lateinit var uiManager: UiModeManager
     private lateinit var rssFileIntent: Intent
@@ -32,10 +39,16 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setTheme(R.style.Theme_VKCup_Final_Dark)
+        setTheme(R.style.Theme_VKCup_Final)
         setContentView(R.layout.activity_main)
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        retrofit = Retrofit.Builder()
+                .baseUrl("https://vk.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        api = retrofit.create(FileLoadingAPI::class.java)
     }
 
     fun getPath(uri: Uri?): String? {
@@ -72,6 +85,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun checkRss(){
+        if (!rss_url.text.isEmpty()) {
+            val url = rss_url.text.toString()
+            FileNetWorker.loadRss(this, api, url) {
+                channel = RssParser.parse(it)
+                Log.d("loaded_rss", channel.toString())
+                checkJson()
+            }
+        } else if (channel == null){
+            Notifier.showToast(this, "Введите URL или загрузите файл .RSS")
+            return
+        }
+        else {
+            checkJson()
+        }
+    }
+
+    fun checkJson(){
+        // check json
+
+        runPodcastActivity()
+    }
+
+    fun runPodcastActivity(){
+        if (channel != null){
+            val intent = Intent(this, PodcastActivity::class.java)
+            intent.putExtra("channel", channel)
+            startActivity(intent)
+        }
+    }
+
     suspend fun notifyFileReadSuccessfully(path: String){
         withContext(Main){
             rss_filename.text = path
@@ -80,7 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startListening(v: View){
-
+        checkRss()
     }
 
     fun authVk(v: View){
@@ -94,6 +138,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openJson(v: View){
-        
+
     }
 }

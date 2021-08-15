@@ -2,10 +2,14 @@
 buildscript {
     ext.kotlin_version = "1.4.32"
     repositories {
+        maven {
+            url 'http://storage.googleapis.com/r8-releases/raw' // ADD THIS.
+        }
         google()
         jcenter()
     }
     dependencies {
+        classpath 'com.android.tools:r8:2.2.64' // ADD THIS.
         classpath "com.android.tools.build:gradle:4.1.2"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
