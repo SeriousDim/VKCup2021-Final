@@ -16,4 +16,6 @@
     <string name="more_emoji">Больше реакций</string>
     <string name="loading">Загрузка...</string>
 
+    <string name="rss_default_link">https://vk.com/podcasts-147415323_-1000000.rss</string>
+
 </resources>

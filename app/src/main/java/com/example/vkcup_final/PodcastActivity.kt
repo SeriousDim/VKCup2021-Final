@@ -117,6 +117,7 @@ class PodcastActivity : AppCompatActivity() {
             progress.progress = ms / 1000
             time_current.text = TimeFormatter.secToText(ms)
             time_left.text = "-${TimeFormatter.secToText(dur - ms)}"
+            audiowave.updatePosition(ms / 1000)
         }
     }
 
@@ -145,16 +146,19 @@ class PodcastActivity : AppCompatActivity() {
         progress.max = podcast?.durationSec!!
         progress.progress = 0
 
+        audiowave.maxPosition = progress.max
+        audiowave.updatePosition(0)
+
         if (job != null)
             job?.cancel()
         startProgressCoroutine()
     }
 
     override fun onDestroy() {
-        if (player != null)
-            player?.release()
         if (job != null)
             job?.cancel()
+        if (player != null)
+            player?.release()
         super.onDestroy()
     }
 }
