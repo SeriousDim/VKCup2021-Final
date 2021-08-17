@@ -1,5 +1,6 @@
 package com.example.vkcup_final.retrofit
 
+import com.example.vkcup_final.emoji_pojos.EmojiData
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -12,8 +13,8 @@ interface FileLoadingAPI {
     @Streaming
     fun loadByUrl(@Url url: String): Call<ResponseBody>
 
-    @GET
+    /*@GET
     @Streaming
-    fun loadReactions(@Url url: String): Call<ResponseBody> // POJO instead ResponseBody
+    fun loadReactions(@Url url: String): Call<ResponseBody>*/
 
 }

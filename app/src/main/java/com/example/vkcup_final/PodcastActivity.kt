@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.vk_cup_2021.modules.Notifier
+import com.example.vkcup_final.emoji_pojos.EmojiData
 import com.example.vkcup_final.modules.PodcastPlayer
 import com.example.vkcup_final.modules.TimeFormatter
 import com.example.vkcup_final.rss_pojos.Channel
@@ -19,6 +20,8 @@ import kotlinx.coroutines.Dispatchers.Main
 class PodcastActivity : AppCompatActivity() {
 
     private var channel: Channel? = null
+    private var emojiData: EmojiData? = null
+
     private var player: PodcastPlayer? = null
     private var podcast: PodcastItem? = null
     private var job: Job? = null
@@ -29,7 +32,8 @@ class PodcastActivity : AppCompatActivity() {
         setTheme(R.style.Theme_Podcast)
         setContentView(R.layout.activity_podcast)
 
-        channel = intent.getSerializableExtra("channel") as Channel
+        channel = intent.getSerializableExtra("channel") as Channel?
+        emojiData = intent.getSerializableExtra("emojiData") as EmojiData?
         player = PodcastPlayer()
 
         setProgressListener()

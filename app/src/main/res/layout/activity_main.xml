@@ -32,8 +32,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:backgroundTint="@color/vk_purple"
             android:onClick="openJson"
             android:text="@string/open_file"
+            android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/json_url" />
 
@@ -44,6 +46,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/rss"
+            android:textColor="@color/vk_purple"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -56,6 +59,7 @@
             android:layout_marginTop="64dp"
             android:layout_marginEnd="8dp"
             android:text="@string/json"
+            android:textColor="@color/vk_purple"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,8 +87,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:backgroundTint="@color/vk_purple"
             android:onClick="openRss"
             android:text="@string/open_file"
+            android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/rss_url" />
 
@@ -110,6 +116,7 @@
             android:ems="10"
             android:hint="@string/tech_info"
             android:inputType="textPersonName"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -126,6 +133,7 @@
             android:onClick="authVk"
             android:text="@string/auth_vk"
             android:textColor="@color/white"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/json_open" />
@@ -137,9 +145,10 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@color/vk_purple_trasnparent"
+            android:backgroundTint="@color/vk_purple"
             android:onClick="startListening"
             android:text="@string/go_to_listen"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

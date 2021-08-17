@@ -2,6 +2,8 @@ package com.example.vk_cup_2021.modules
 
 import android.content.res.AssetManager
 import android.graphics.Typeface
+import android.view.View
+import android.widget.Button
 import android.widget.TextView
 
 class FontWorker{
@@ -19,6 +21,16 @@ class FontWorker{
 
         fun setMiddleVKFont(tv: TextView, assets: AssetManager){
             FontWorker.setFont(tv, assets, "VK_Sans_Meduim.ttf")
+        }
+
+        fun setDemiBoldVKFont(btn: Button, assets: AssetManager){
+            var typeface = Typeface.createFromAsset(assets, "VK_Sans_DemiBold.otf")
+            btn.typeface = typeface
+        }
+
+        fun setMiddleVKFont(btn: Button, assets: AssetManager){
+            var typeface = Typeface.createFromAsset(assets, "VK_Sans_Meduim.ttf")
+            btn.typeface = typeface
         }
 
     }

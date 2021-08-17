@@ -8,11 +8,13 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.vk_cup_2021.modules.Notifier
+import com.example.vkcup_final.emoji_pojos.EmojiData
 import com.example.vkcup_final.modules.FileNetWorker
 import com.example.vkcup_final.modules.RssParser
 import com.example.vkcup_final.retrofit.FileLoadingAPI
 import com.example.vkcup_final.rss_pojos.Channel
 import com.example.vkcup_final.vk_sdk.VKWorker
+import com.google.gson.Gson
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
@@ -22,11 +24,16 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.io.Reader
 
 
 class MainActivity : AppCompatActivity() {
 
     private var channel: Channel? = null
+    private var emojiData: EmojiData? = null
+
     private lateinit var retrofit: Retrofit
     private lateinit var api: FileLoadingAPI
 
@@ -49,21 +56,11 @@ class MainActivity : AppCompatActivity() {
         api = retrofit.create(FileLoadingAPI::class.java)
     }
 
-//    fun getPath(uri: Uri?): String? {
-//        val projection = arrayOf(MediaStore.Images.Media.DATA)
-//        val loader = CursorLoader(this, uri!!, projection, null, null, null)
-//        val cursor: Cursor? = loader.loadInBackground()
-//        startManagingCursor(cursor)
-//        val column_index: Int = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)!!
-//        cursor.moveToFirst()
-//        return cursor.getString(column_index)
-//    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val callback = object: VKAuthCallback {
             override fun onLogin(token: VKAccessToken) {
                 // User passed authorization
-                vkAuthBtn.isEnabled = false
+                vkAuthBtn.visibility = View.GONE
                 Notifier.showToast(this@MainActivity, "Вы успешно вошли")
                 Log.d("vk_login", "Success: ${token.accessToken}")
                 VKWorker.requestUserInfo()
@@ -80,19 +77,26 @@ class MainActivity : AppCompatActivity() {
             super.onActivityResult(requestCode, resultCode, data)
             when (requestCode){
                 10 -> {
-                    if (resultCode == RESULT_OK) {
-                        var uri = data?.data
-                        val path = uri?.path
-                        if (!path?.endsWith(".rss")!!)
-                            Notifier.showToast(this, "Невозможно открыть этот файл. Откройте файл .RSS")
-                        else{
-                            var stream = contentResolver.openInputStream(uri!!)
-                            go.isEnabled = false
-
+                    onFileOpened(resultCode, data, ".rss") {
+                        s, p ->
+                        run {
                             CoroutineScope(IO).launch()
                             {
-                                channel = RssParser.parse(stream!!)
-                                notifyFileReadSuccessfully(uri.path!!)
+                                channel = RssParser.parse(s)
+                                notifyRssReadSuccessfully(p)
+                            }
+                        }
+                    }
+                }
+                11 -> {
+                    onFileOpened(resultCode, data, ".json") {
+                        s, p ->
+                        run {
+                            CoroutineScope(IO).launch()
+                            {
+                                val reader: Reader = InputStreamReader(s, "UTF-8")
+                                emojiData = Gson().fromJson(reader, EmojiData::class.java)
+                                notifyJsonReadSuccessfully(p)
                             }
                         }
                     }
@@ -101,10 +105,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onFileOpened(resultCode: Int, data: Intent?, fileType: String, action: (InputStream, String) -> Unit){
+        if (resultCode == RESULT_OK) {
+            val uri = data?.data
+            val path = uri?.path
+            if (!path?.endsWith(fileType)!!)
+                Notifier.showToast(this, "Невозможно открыть этот файл. Откройте файл $fileType")
+            else {
+                val stream = contentResolver.openInputStream(uri)
+                action.invoke(stream!!, path)
+            }
+        }
+    }
+
     fun checkRss(){
         if (!rss_url.text.isEmpty()) {
             val url = rss_url.text.toString()
-            FileNetWorker.loadRss(this, api, url) {
+            FileNetWorker.loadFile(this, api, url) {
                 channel = RssParser.parse(it)
                 Log.d("loaded_rss", channel.toString())
                 checkJson()
@@ -119,30 +136,49 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun checkJson(){
-        // check json
-
-        checkToken()
+        if (!json_url.text.isEmpty()){ // json_url всегда пуст, так как скрыт
+            val url = json_url.text.toString()
+            FileNetWorker.loadFile(this, api, url) {
+                CoroutineScope(IO).launch {
+                    val reader: Reader = InputStreamReader(it, "UTF-8")
+                    emojiData = Gson().fromJson(reader, EmojiData::class.java)
+                    Log.d("loaded_json", channel.toString())
+                    checkToken()
+                }
+            }
+        } else
+            CoroutineScope(Main).launch {
+                checkToken()
+            }
     }
 
-    fun checkToken(){
-        if (VKWorker.token != null)
-            runPodcastActivity()
-        else
-            Notifier.showToast(this, "Вы не авторизовались через ВКонтакте")
+    suspend fun checkToken(){
+        withContext(Main){
+            if (VKWorker.token != null)
+                runPodcastActivity()
+            else
+                Notifier.showToast(this@MainActivity, "Вы не авторизовались через ВКонтакте")
+        }
     }
 
     fun runPodcastActivity(){
         if (channel != null){
             val intent = Intent(this, PodcastActivity::class.java)
             intent.putExtra("channel", channel)
+            intent.putExtra("emojiData", emojiData)
             startActivity(intent)
         }
     }
 
-    suspend fun notifyFileReadSuccessfully(path: String){
+    suspend fun notifyRssReadSuccessfully(path: String){
         withContext(Main){
             rss_filename.text = path
-            go.isEnabled = true
+        }
+    }
+
+    suspend fun notifyJsonReadSuccessfully(path: String){
+        withContext(Main){
+            json_filename.text = path
         }
     }
 
@@ -161,6 +197,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openJson(v: View){
-
+        rssFileIntent = Intent(Intent.ACTION_GET_CONTENT)
+        rssFileIntent.type = "*/*"
+        startActivityForResult(rssFileIntent, 11)
     }
 }

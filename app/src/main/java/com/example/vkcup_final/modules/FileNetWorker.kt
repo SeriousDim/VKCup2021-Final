@@ -16,7 +16,7 @@ class FileNetWorker {
 
     companion object {
 
-        fun loadRss(c: Context, api: FileLoadingAPI, link: String, action: (InputStream) -> Unit){
+        fun loadFile(c: Context, api: FileLoadingAPI, link: String, action: (InputStream) -> Unit){
             var call = api.loadByUrl(link)
             call.enqueue(object : Callback<ResponseBody?> {
                 override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {

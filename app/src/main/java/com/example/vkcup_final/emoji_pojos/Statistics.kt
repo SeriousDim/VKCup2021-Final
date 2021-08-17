@@ -1,8 +1,9 @@
-package com.example.example
+package com.example.vkcup_final.emoji_pojos
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-   
+
 data class Statistics (
 
    @SerializedName("time") var time : Int,
@@ -11,4 +12,4 @@ data class Statistics (
    @SerializedName("age") var age : Int,
    @SerializedName("city_id") var cityId : Int
 
-)
+) : Serializable
