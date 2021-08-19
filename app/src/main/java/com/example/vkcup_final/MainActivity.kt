@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.vk_cup_2021.modules.FontWorker
 import com.example.vk_cup_2021.modules.Notifier
 import com.example.vkcup_final.emoji_pojos.EmojiData
 import com.example.vkcup_final.modules.FileNetWorker
@@ -54,6 +55,11 @@ class MainActivity : AppCompatActivity() {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         api = retrofit.create(FileLoadingAPI::class.java)
+
+        FontWorker.setDemiBoldVKFont(vkAuthBtn, assets)
+        FontWorker.setDemiBoldVKFont(textView3, assets)
+        FontWorker.setDemiBoldVKFont(textView4, assets)
+        FontWorker.setMiddleVKFont(go, assets)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

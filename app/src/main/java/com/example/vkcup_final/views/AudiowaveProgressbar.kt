@@ -2,14 +2,23 @@ package com.example.vkcup_final.views
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import com.example.vkcup_final.R
+import com.example.vkcup_final.emoji_pojos.Episodes
+import com.example.vkcup_final.emoji_pojos.Reactions
+import com.example.vkcup_final.modules.EpisodeStat
+import com.example.vkcup_final.modules.ReactionManager
+import com.example.vkcup_final.modules.StatsManager
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class AudiowaveProgressbar : View {
 
@@ -27,7 +36,7 @@ class AudiowaveProgressbar : View {
 
     private val STANDART_HEIGHT = 100
 
-    var emojiSize = 50
+    var emojiSizeDp = 14f
     var startY = 15f
     var margin = 16f
     var maxProgress = 50 // кол-во полос
@@ -37,20 +46,75 @@ class AudiowaveProgressbar : View {
 
     var currentPosition: Int = 2300 // сек.
     var maxPosition: Int = 10000 // сек.
+    var max = 0f
 
     lateinit var linePaintTrans: Paint
     lateinit var linePaint: Paint
     lateinit var emojiPaint: Paint
+    lateinit var textPaint: Paint
 
-    private lateinit var rndData: List<Int>
+    private lateinit var lineData: List<Int>
+    private var stats: EpisodeStat? = null
+    private var reactManager: ReactionManager? = null
+    private var popReactions: List<Pair<Int, Map.Entry<Int, Int>?>>? = null
+
+    fun getDrawableEmoji(ctx: Context, s: String): Drawable {
+        return when (s){
+            "\uD83D\uDE02" -> AppCompatResources.getDrawable(ctx, R.drawable.lol)!!
+            "\uD83D\uDC4D" -> AppCompatResources.getDrawable(ctx, R.drawable.like)!!
+            "\uD83D\uDC4E" -> AppCompatResources.getDrawable(ctx, R.drawable.dislike)!!
+            "\uD83D\uDE21" -> AppCompatResources.getDrawable(ctx, R.drawable.angry)!!
+            "\uD83D\uDE14" -> AppCompatResources.getDrawable(ctx, R.drawable.sad)!!
+            "\uD83D\uDE0A" -> AppCompatResources.getDrawable(ctx, R.drawable.happy)!!
+            "\uD83D\uDCB8" -> AppCompatResources.getDrawable(ctx, R.drawable.advert)!!
+            "\uD83D\uDCA9" -> AppCompatResources.getDrawable(ctx, R.drawable.boo)!!
+            else -> AppCompatResources.getDrawable(ctx, R.drawable.ic_baseline_tag_faces_24)!!
+        }
+    }
+
+    fun updateLines(episodes: EpisodeStat, r: ReactionManager){
+        lineData = episodes.reactionProgress
+        max = lineData.maxByOrNull { it }?.toFloat()!!
+
+        reactManager = r
+        stats = episodes
+
+        processReactions()
+
+        invalidate()
+    }
 
     fun updatePosition(cur: Int){
         currentPosition = cur
         invalidate()
     }
 
+    fun processReactions(){
+        if (stats != null){
+            val withInd = stats!!.reactionPerLine.mapIndexed() {
+                i, h -> Pair(i, h)
+            }
+            val maxes = withInd.map {
+                val localMax = it.second.maxByOrNull {
+                    it.value
+                }
+                Pair(it.first, localMax)
+            }.filter { it.second != null }
+
+            val newMax = maxes.maxByOrNull {
+                it.second?.value!!
+            }
+            popReactions = maxes.filter {
+                it.second != null && it.second?.value!! >= newMax!!.second?.value!! * 0.35f
+            }
+
+        }
+    }
+
     fun init() {
-        rndData = IntArray(maxProgress) { Random().nextInt(10000) }.asList()
+        emojiSizeDp = pxFromDp(emojiSizeDp, ctx)
+
+        lineData = IntArray(maxProgress) { Random().nextInt(10000) }.asList()
 
         linePaintTrans = Paint(Paint.ANTI_ALIAS_FLAG)
         linePaintTrans.color = ctx.getColor(R.color.vk_transparent)
@@ -62,6 +126,10 @@ class AudiowaveProgressbar : View {
 
         emojiPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         emojiPaint.color = ctx.getColor(R.color.white_transparent)
+
+        textPaint = Paint(linePaintTrans)
+        textPaint.setColor(Color.WHITE)
+        textPaint.setTextSize(emojiSizeDp.toFloat())
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -92,7 +160,6 @@ class AudiowaveProgressbar : View {
 
     override fun onDraw(cnv: Canvas?) {
         if (cnv != null){
-            val max = rndData.maxByOrNull { it }?.toFloat()
             val maxHeight = height * lineBorder
             val distance = (width - 2 * margin) / maxProgress
             var x = margin + lineWidth
@@ -101,19 +168,38 @@ class AudiowaveProgressbar : View {
             if (currentPosition > 0){
                 amount = ((currentPosition.toFloat() / maxPosition.toFloat()) * maxProgress).toInt()
                 for (i in 0..amount-1){
-                    var r = rndData[i]
+                    var r = lineData[i]
                     cnv.drawLine(x, height - startY, x, height - startY - (maxHeight * r / max!!), linePaint)
                     x += distance
                 }
             }
 
             for (i in amount..maxProgress-1){
-                var r = rndData[i]
+                var r = lineData[i]
                 cnv.drawLine(x, height - startY, x, height - startY - (maxHeight * r / max!!), linePaintTrans)
                 x += distance
             }
 
-            drawEmoji(cnv, 1000, 1200, R.drawable.happy)
+            if (popReactions != null){
+                for (e in popReactions!!){
+                    val reaction = reactManager!!.getReaction(e.second!!.key)
+                    val index = e.first
+                    val posSec = ((index.toFloat() / maxProgress.toFloat()) * maxPosition).toInt()
+                    drawEmoji(cnv, posSec, reaction!!.emoji)
+                }
+            }
+        }
+    }
+
+    fun drawEmoji(cnv: Canvas?, sec: Int, emoji: String){
+        if (cnv != null){
+            val s = sec.toFloat() / maxPosition.toFloat() * width + margin
+            val h = height * emojiBorder + margin
+            cnv.drawRoundRect(s - lineWidth, height + startY, s + lineWidth, height - h, 3f, 3f, emojiPaint)
+
+            val x1 = (s - emojiSizeDp * 0.5)
+            val y1 = (height - h - 2 * margin)
+            cnv.drawText(emoji, x1.toFloat(), y1, textPaint)
         }
     }
 
@@ -127,12 +213,25 @@ class AudiowaveProgressbar : View {
             val bitmap = AppCompatResources.getDrawable(ctx, drawableId)?.toBitmap()
             val rect1 = Rect(0, 0, bitmap?.width!!, bitmap.height)
 
-            val x1: Int = ((xf + xt) * 0.5 - emojiSize * 0.5).toInt()
-            val x2: Int = x1 + emojiSize
+            val x1: Int = ((xf + xt) * 0.5 - emojiSizeDp * 0.5).toInt()
+            val x2: Int = x1 + emojiSizeDp.toInt()
             val y1: Int = (height - h - margin).toInt()
-            val y2: Int = y1 - emojiSize
+            val y2: Int = y1 - emojiSizeDp.toInt()
             val rect2 = Rect(x1, y2, x2, y1)
             cnv.drawBitmap(bitmap!!, rect1, rect2, null)
+        }
+    }
+
+    fun drawEmoji(cnv: Canvas?, fromSec: Int, toSec: Int, emoji: String){
+        if (cnv != null){
+            val xf = fromSec.toFloat() / maxPosition.toFloat() * width - margin
+            val xt = toSec.toFloat() / maxPosition.toFloat() * width + margin
+            val h = height * emojiBorder + margin
+            cnv.drawRoundRect(xf, height + startY, xt, height - h, 3f, 3f, emojiPaint)
+
+            val x1 = ((xf + xt) * 0.5 - emojiSizeDp * 0.5)
+            val y1 = (height - h - 2 * margin)
+            cnv.drawText(emoji, x1.toFloat(), y1, textPaint)
         }
     }
 

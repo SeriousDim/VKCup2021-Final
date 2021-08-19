@@ -1,18 +1,21 @@
 package com.example.vkcup_final
 
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
+import android.widget.SimpleAdapter
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.vk_cup_2021.modules.Notifier
 import com.example.vkcup_final.emoji_pojos.EmojiData
-import com.example.vkcup_final.modules.PodcastPlayer
-import com.example.vkcup_final.modules.TimeFormatter
+import com.example.vkcup_final.modules.*
 import com.example.vkcup_final.rss_pojos.Channel
 import com.example.vkcup_final.rss_pojos.PodcastItem
+import com.example.vkcup_final.views.EmojiBinder
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_podcast.*
+import kotlinx.android.synthetic.main.fragment_modal.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -21,6 +24,13 @@ class PodcastActivity : AppCompatActivity() {
 
     private var channel: Channel? = null
     private var emojiData: EmojiData? = null
+
+    private var reactManager: ReactionManager? = null
+    private var statManager: StatsManager? = null
+    private var episodeStat: EpisodeStat? = null
+
+    private var avaliableEmojis = ArrayList<Map<String, Any>>()
+    private lateinit var adapter: SimpleAdapter
 
     private var player: PodcastPlayer? = null
     private var podcast: PodcastItem? = null
@@ -36,6 +46,11 @@ class PodcastActivity : AppCompatActivity() {
         emojiData = intent.getSerializableExtra("emojiData") as EmojiData?
         player = PodcastPlayer()
 
+        if (emojiData != null){
+            reactManager = ReactionManager(emojiData!!)
+            statManager = StatsManager(audiowave.maxProgress)
+        }
+
         setProgressListener()
         setVolumeListener()
 
@@ -44,7 +59,7 @@ class PodcastActivity : AppCompatActivity() {
                     .into(label)
             podcaster.text = channel?.owner
 
-            setPodcast(0)
+            setPodcast(1)
         } else {
             Notifier.showToast(this, "Ошибка. Данные RSS не были получены")
             finish()
@@ -53,6 +68,24 @@ class PodcastActivity : AppCompatActivity() {
         back.setOnClickListener() {
             finish()
         }
+
+        createReactionList()
+    }
+
+    fun createReactionList(){
+        val KEY_EMOJI = "emoji"
+        val KEY_NAME = "text"
+
+        val from = arrayOf(KEY_EMOJI, KEY_NAME)
+        val to = intArrayOf(R.id.emoji_btn, R.id.emoji_btn)
+        adapter = SimpleAdapter(this, avaliableEmojis, R.layout.emoji_element,
+            from ,to)
+        adapter.viewBinder = EmojiBinder()
+        emoji_list.adapter = adapter
+    }
+
+    fun updateAvailableReactions(){
+
     }
 
     fun pauseOrPlay(v: View){
@@ -136,10 +169,6 @@ class PodcastActivity : AppCompatActivity() {
         }
     }
 
-    fun setAudiowaveProgressbar(){
-
-    }
-
     fun setPodcast(index: Int){
         podcast = channel?.podcasts!![index]
         var url = podcast?.mp3Link
@@ -152,6 +181,19 @@ class PodcastActivity : AppCompatActivity() {
 
         audiowave.maxPosition = progress.max
         audiowave.updatePosition(0)
+
+        if (emojiData != null){
+            val episode = reactManager?.getEpisode(podcast!!.guid)
+            if (episode != null){
+                episodeStat = statManager?.
+                process(
+                        episode!!,
+                        podcast?.durationSec!!)
+                audiowave.updateLines(episodeStat!!, reactManager!!)
+            }
+        }
+
+
 
         if (job != null)
             job?.cancel()

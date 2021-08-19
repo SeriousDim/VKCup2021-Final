@@ -20,7 +20,7 @@ class FontWorker{
         }
 
         fun setMiddleVKFont(tv: TextView, assets: AssetManager){
-            FontWorker.setFont(tv, assets, "VK_Sans_Meduim.ttf")
+            FontWorker.setFont(tv, assets, "VK_Sans_Medium.ttf")
         }
 
         fun setDemiBoldVKFont(btn: Button, assets: AssetManager){
@@ -29,7 +29,7 @@ class FontWorker{
         }
 
         fun setMiddleVKFont(btn: Button, assets: AssetManager){
-            var typeface = Typeface.createFromAsset(assets, "VK_Sans_Meduim.ttf")
+            var typeface = Typeface.createFromAsset(assets, "VK_Sans_Medium.ttf")
             btn.typeface = typeface
         }
 

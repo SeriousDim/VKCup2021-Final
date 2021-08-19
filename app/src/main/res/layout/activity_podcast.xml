@@ -96,33 +96,33 @@
         app:layout_constraintTop_toBottomOf="@+id/volume">
 
         <ImageButton
-            android:id="@+id/imageButton6"
+            android:id="@+id/react1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/emoji_round"
             android:padding="24dp"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton7"
+            app:layout_constraintEnd_toStartOf="@+id/react2"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/lol" />
 
         <ImageButton
-            android:id="@+id/imageButton7"
+            android:id="@+id/react2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/emoji_round"
             android:padding="24dp"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton9"
+            app:layout_constraintEnd_toStartOf="@+id/react3"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageButton6"
+            app:layout_constraintStart_toEndOf="@+id/react1"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/like" />
 
         <ImageButton
-            android:id="@+id/imageButton8"
+            android:id="@+id/react4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -130,25 +130,26 @@
             android:padding="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageButton9"
+            app:layout_constraintStart_toEndOf="@+id/react3"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/angry" />
 
         <ImageButton
-            android:id="@+id/imageButton9"
+            android:id="@+id/react3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:background="@drawable/emoji_round"
             android:padding="24dp"
-            app:layout_constraintEnd_toStartOf="@+id/imageButton8"
+            android:visibility="visible"
+            app:layout_constraintEnd_toStartOf="@+id/react4"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/imageButton7"
+            app:layout_constraintStart_toEndOf="@+id/react2"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/dislike" />
 
         <Button
-            android:id="@+id/button4"
+            android:id="@+id/more_reactions"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_marginTop="8dp"
@@ -160,7 +161,7 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton7" />
+            app:layout_constraintTop_toBottomOf="@+id/react2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -351,7 +352,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        tools:context="com.androidsample.BottomSheetActivity">
+        tools:context="com.androidsample.BottomSheetActivity"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="574dp">
 
         <include
             android:id="@+id/modal"

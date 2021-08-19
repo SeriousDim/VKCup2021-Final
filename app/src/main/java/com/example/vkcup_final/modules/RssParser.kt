@@ -76,6 +76,9 @@ class RssParser {
                                     if (p.depth >= 4 && stack[3].equals("title")) {
                                         // title
                                         currentPodcast?.title = p.text
+                                    } else if (p.depth >= 4 && stack[3].equals("guid")){
+                                        // guid
+                                        currentPodcast?.guid = p.text
                                     } else if (p.depth >= 4 && stack[3].equals("itunes:duration")) {
                                         // need transform duration string to int
                                         val dur = p.text.split(":").map { it.toInt() }
