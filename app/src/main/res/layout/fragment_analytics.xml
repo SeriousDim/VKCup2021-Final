@@ -86,30 +86,6 @@
                 android:background="@color/grey_text" />
 
             <TextView
-                android:id="@+id/title2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:text="@string/react_types"
-                android:textColor="@color/white"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/toolbar2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="gone" />
-
-            <View
-                android:id="@+id/view2"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_margin="16dp"
-                android:background="@color/grey_text"
-                tools:visibility="gone" />
-
-            <TextView
                 android:id="@+id/title3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
