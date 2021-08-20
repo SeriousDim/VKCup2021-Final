@@ -16,6 +16,13 @@
     <string name="more_emoji">Больше реакций</string>
     <string name="loading">Загрузка...</string>
     <string name="reactions">Реакции</string>
+    <string name="analytics">Статистика</string>
+    <string name="react_types">Виды реакций</string>
+    <string name="ages">Пол и возраст</string>
+    <string name="cities">Города</string>
+
+    <string name="men">Мужчины</string>
+    <string name="women">Женщины</string>
 
     <string name="rss_default_link">https://vk.com/podcasts-147415323_-1000000.rss</string>
     <string name="json_default_link">https://www.dropbox.com/s/b5uuko4vyiles97/podcast.json</string>

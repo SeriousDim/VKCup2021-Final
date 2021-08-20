@@ -57,6 +57,14 @@ class ReactionManager(
         }
     }
 
+    fun getAllReactions(e: Episodes, posSec: Int): List<Reactions>{
+        val result = getDefaultReaction(e).toMutableList()
+        var aval = getAvaliableReactions(e, posSec)
+        for (i in aval)
+            result.add(i)
+        return result
+    }
+
     fun getAvaliableReactions(e: Episodes, posSec: Int): List<Reactions>{
         val ids = mutableListOf<Int>()
         e.timedReactions.forEach {

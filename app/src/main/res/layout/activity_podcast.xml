@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/grey_background"
     android:backgroundTintMode="add"
-    android:padding="8dp"
     tools:context=".PodcastActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -37,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:background="#00000000"
+        android:onClick="showHideStats"
         app:layout_constraintBottom_toBottomOf="@+id/toolbar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -100,7 +100,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/emoji_round"
+            android:background="@drawable/emoji_button_selector"
+            android:onClick="onReact"
             android:padding="24dp"
             app:layout_constraintEnd_toStartOf="@+id/react2"
             app:layout_constraintHorizontal_bias="0.5"
@@ -113,7 +114,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/emoji_round"
+            android:background="@drawable/emoji_button_selector"
+            android:onClick="onReact"
             android:padding="24dp"
             app:layout_constraintEnd_toStartOf="@+id/react3"
             app:layout_constraintHorizontal_bias="0.5"
@@ -126,7 +128,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/emoji_round"
+            android:background="@drawable/emoji_button_selector"
+            android:onClick="onReact"
             android:padding="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -139,7 +142,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/emoji_round"
+            android:background="@drawable/emoji_button_selector"
+            android:onClick="onReact"
             android:padding="24dp"
             android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/react4"
@@ -148,20 +152,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/dislike" />
 
-        <Button
-            android:id="@+id/more_reactions"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/emoji_round"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="@string/more_emoji"
-            android:textColor="@color/grey_text"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/react2" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -366,5 +356,16 @@
             app:layout_constraintTop_toTopOf="parent"></include>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <include
+        android:id="@+id/analyticsWindow"
+        layout="@layout/fragment_analytics"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

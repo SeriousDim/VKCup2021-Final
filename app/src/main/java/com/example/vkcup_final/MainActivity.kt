@@ -69,8 +69,8 @@ class MainActivity : AppCompatActivity() {
                 vkAuthBtn.visibility = View.GONE
                 Notifier.showToast(this@MainActivity, "Вы успешно вошли")
                 Log.d("vk_login", "Success: ${token.accessToken}")
-                VKWorker.requestUserInfo()
                 VKWorker.token = token
+                VKWorker.requestUserInfo()
             }
 
             override fun onLoginFailed(errorCode: Int) {

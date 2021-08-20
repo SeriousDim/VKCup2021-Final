@@ -25,19 +25,27 @@ data class EpisodeStat(
 
     var reactionPerLine: ArrayList<HashMap<Int, Int>>
     var reactionProgress: ArrayList<Int>
+    var reactionPer20: ArrayList<Int>
     var reactionAmount: HashMap<Int, Int>
     var cityAmount: HashMap<Int, Int>
     var ageAmount: HashMap<Pair<Int, Int>, AgeInfo>
     var womenAmount: Int
     var menAmount: Int
 
+    var lowCapacity = 20
+
     init {
         reactionPerLine = ArrayList(maxProgress)
         reactionProgress = ArrayList(maxProgress)
+        reactionPer20 = ArrayList(lowCapacity)
 
         for (i in 0..maxProgress-1){
             reactionPerLine.add(HashMap())
             reactionProgress.add(0)
+        }
+
+        for (i in 0..lowCapacity-1){
+            reactionPer20.add(0)
         }
 
         reactionAmount = HashMap() // <reactionId, amount>
@@ -104,6 +112,9 @@ class StatsManager(
             // реакции посекундно
             val index = ((s.time.toFloat() / 1000f) / durSec.toFloat() * maxProgress).toInt()
             data.reactionProgress[index]++
+
+            var index2 = s.time.toFloat() / 1000f / durSec.toFloat() * data.lowCapacity
+            data.reactionPer20[index2.toInt()]++
 
             val oldMap = data.reactionPerLine.getOrElse(index) { HashMap() }
             val oldReact = oldMap.getOrElse(s.reactionId) { 0 }
